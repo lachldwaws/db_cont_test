@@ -12,3 +12,11 @@ services:
     environment:
     # The value of the environment variable MY_PASSWORD1 is set as the value of MYSQL_ROOT_PASSWORD.
       MYSQL_ROOT_PASSWORD: ${MY_PASSWORD1}
+  server:
+    image: db_server
+    build:
+      context: ./server
+    ports:
+      - 9001:5000
+    depends_on:
+      - database
