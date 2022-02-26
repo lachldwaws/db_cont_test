@@ -7,7 +7,7 @@ This is a simple test project to practise management of multiple containers. The
 The **database** runs on MySQL and contains 1 table: `Users`, with the following schema:
 - `id` - Integer, primary key, automatically generated.
 - `username` - Varchar(64). Not null, must be unique.
-- `email` - Varchar(128). 128 characters is already very generous for an email.
+- `email` - Varchar(254). This is an erratum to the RFC 3696 standard.
 - `password_hash` - Varchar(60). Bcrypt output hashes are always 60 characters in length.
 
 ## The Server
@@ -20,3 +20,8 @@ The 4 operatiations are *create* (Adding a new user), *read* (Get a user's infor
 - ***Input Length*** for the username, email, and password hash, so that the input doesn't overflow the maximum string length in the table.
 - ***Regex***, only for the email.
 - ***Uniqueness***, only for the username. No 2 usernames in the table can be the same.
+
+## Resources
+
+- [A StackOverflow question on email lengths.](https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address)
+- [Variable substitution in a docker-compose file.](https://docs.docker.com/compose/compose-file/compose-file-v3/#variable-substitution)
