@@ -4,7 +4,7 @@ This is a simple test project to practise management of multiple containers. The
 
 ## The Database
 
-The **database** runs on MySQL and contains 1 table: `Users`, with the following schema:
+The **database** runs on MySQL and contains 1 table: `users`, with the following schema:
 - `id` - Integer, primary key, automatically generated.
 - `username` - Varchar(64). Not null, must be unique.
 - `email` - Varchar(254). This is an erratum to the RFC 3696 standard.
