@@ -1,0 +1,10 @@
+services:
+  database:
+    image: mysql # The database is launched from an online image.
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - 9002:3306
+    environment:
+    # The value of the environment variable MY_PASSWORD1 is set as the value of MYSQL_ROOT_PASSWORD.
+      MYSQL_ROOT_PASSWORD: ${MY_PASSWORD1}
