@@ -25,3 +25,4 @@ The 4 operatiations are *create* (Adding a new user), *read* (Get a user's infor
 
 - [A StackOverflow question on email lengths.](https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address)
 - [Variable substitution in a docker-compose file.](https://docs.docker.com/compose/compose-file/compose-file-v3/#variable-substitution)
+- [isemail - A Node.js email address validation library.](https://www.npmjs.com/package/isemail)
