@@ -6,6 +6,8 @@ services:
     ports:
       - 9002:3306
     volumes:
+        # Here, we mount the db folder to place the script inside it in the entrypoint of this container.
+        # This will cause the mysql container to execute this script and thus add our database.
       - ./db:/docker-entrypoint-initdb.d
     environment:
     # The value of the environment variable MY_PASSWORD1 is set as the value of MYSQL_ROOT_PASSWORD.
