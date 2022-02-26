@@ -12,7 +12,7 @@ The **database** runs on MySQL and contains 1 table: `Users`, with the following
 
 ## The Server
 
-The **server** is just a simple abstraction layer and sits in front of the database, exposing CRUD operations and performing input verification on create & update requests before inserting into the database.
+The **server** is just a simple abstraction layer as a  Node.js project. It sits in front of the database, exposing CRUD operations and performing input verification on create & update requests before inserting into the database.
 
 The 4 operatiations are *create* (Adding a new user), *read* (Get a user's information), *update* (Change a user's information), and *delete* (remove a user).
 
