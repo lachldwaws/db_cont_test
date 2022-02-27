@@ -27,3 +27,4 @@ The 4 operatiations are *create* (Adding a new user), *read* (Get a user's infor
 - [Variable substitution in a docker-compose file.](https://docs.docker.com/compose/compose-file/compose-file-v3/#variable-substitution)
 - [isemail - A Node.js email address validation library.](https://www.npmjs.com/package/isemail)
 - [The MySQL Docker Hub documentation.](https://hub.docker.com/_/mysql)
+- [Unit testing an Express.js application.](https://alexanderpaterson.com/posts/how-to-start-unit-testing-your-express-apps)

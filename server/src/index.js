@@ -21,7 +21,20 @@ app.listen(port, () => {
     });
 })
 
-/* CRUD Routes */
+/*
+ * ************************* CRUD Routes *************************
+ * Generally, every route here is an authenticated route.
+ * The best way to protect these routes and leave authentication
+ * to the frontend is to make the server and database only
+ * privately accessible.
+ */
+
+// Add a user to the users table.
+
+app.put('/users/add', (req, res) => {
+    // TODO
+    res.status(501).send("To be implemented.");
+});
 
 // Read all the entries in the users table.
 
@@ -30,6 +43,28 @@ app.get('/users', (req, res) => {
         console.log("Querying all users.");
         res.status(err ? 500 : 200).send(err ? err : result);
     });
+});
+
+// Get a specific user. Search by username only.
+
+app.get('/users/find/*', (req, res) => {
+    // TODO
+    res.status(501).send("To be implemented.");
+});
+
+// Update a user's information. It is only possible to update a user's username, email address, or password hash.
+// Expect 2 key-value pairs in the form. First pair is "user_id" / id (hidden). Second pair is field_name / new_value.
+
+app.patch('/users/update', (req, res) => {
+    // TODO
+    res.status(501).send("To be implemented.");
+});
+
+// Delete a user from the users table. Requires the username of the user to be deleted.
+
+app.delete('/users/delete', (req, res) => {
+    // TODO
+    res.status(501).send("To be implemented.");
 });
 
 /* Other Routes */

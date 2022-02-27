@@ -4,7 +4,7 @@ USE website;
 
 CREATE TABLE users(
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    username VARCHAR(64) NOT NULL,
+    username VARCHAR(64) NOT NULL UNIQUE,
     email VARCHAR(254),
     password_hash CHAR(60) NOT NULL
 );
