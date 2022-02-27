@@ -48,8 +48,10 @@ app.get('/users', (req, res) => {
 // Get a specific user. Search by username only.
 
 app.get('/users/find/*', (req, res) => {
-    // TODO
-    res.status(501).send("To be implemented.");
+    db.query("SELECT * FROM users WHERE username=?;", [req.params['0']], (err, result, fields) => {
+        console.log(`Finding user with username ${req.params['0']}...`);
+        res.status(err ? 500 : 200).send(err ? err : result);
+    });
 });
 
 // Update a user's information. It is only possible to update a user's username, email address, or password hash.

@@ -15,4 +15,9 @@ INSERT INTO users(username, email, password_hash) VALUES (
 	'awesomeuser123',
     'awesomeuser@awesomedomain.com',
     '$2a$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW' -- This is just a test hash.
+),
+(
+	'anotheruser456',
+    'thisguysucks@baddomain.lol',
+    '$2a$12$R9h/cIPz0gi.URNN83kh2OPST9/PgBkqquzi/Ss7KIPgO2t0jWMUW' -- This is just a test hash.
 );
