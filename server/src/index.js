@@ -1,5 +1,6 @@
 const Express = require('express');
 const MySQL = require('mysql');
+const bodyParser = require('body-parser');
 
 const app = Express();
 const port = 5000;
@@ -12,6 +13,8 @@ const connection_parameters = {
 };
 
 var db = MySQL.createConnection(connection_parameters);
+
+app.use(bodyParser.json());
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}.`);
@@ -64,9 +67,18 @@ app.patch('/users/update', (req, res) => {
 
 // Delete a user from the users table. Requires the username of the user to be deleted.
 
+/* Test Command:
+
+curl --header "Content-Type: application/json" \
+--request DELETE \
+--data '{"key1": "value1", "username": "awesomeuser123", "doesthissuck": "hellnoitdont"}' \
+http://localhost:9001/users/delete
+
+*/
 app.delete('/users/delete', (req, res) => {
     // TODO
-    res.status(501).send("To be implemented.");
+    console.log(req.body);
+    res.status(501).send("To be implemented.\n");
 });
 
 /* Other Routes */
