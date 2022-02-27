@@ -4,9 +4,22 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     ports:
-      - 9002:3306
+      - ${MYSQL_PORT}:3306
     volumes:
+        # Here, we mount the db folder to place the script inside it in the entrypoint of this container.
+        # This will cause the mysql container to execute this script and thus add our database.
       - ./db:/docker-entrypoint-initdb.d
     environment:
     # The value of the environment variable MY_PASSWORD1 is set as the value of MYSQL_ROOT_PASSWORD.
-      MYSQL_ROOT_PASSWORD: ${MY_PASSWORD1}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  server:
+    image: db_server
+    restart: always
+    build:
+      context: ./server
+    ports:
+      - ${SERVER_PORT}:5000
+    depends_on:
+      - database
+    env_file:
+      - secrets.env
