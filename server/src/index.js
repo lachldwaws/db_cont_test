@@ -50,11 +50,22 @@ app.get('/users', (req, res) => {
 
 // Get a specific user. Search by username only.
 
-app.get('/users/find/*', (req, res) => {
-    db.query("SELECT * FROM users WHERE username=?;", [req.params['0']], (err, result, fields) => {
-        console.log(`Finding user with username ${req.params['0']}...`);
-        res.status(err ? 500 : 200).send(err ? err : result);
-    });
+/* Test Command:
+
+curl --header "Content-Type: application/json" \
+--request GET \
+--data '{"username": "awesomeuser123"}' \
+http://localhost:9001/users/find
+
+*/
+app.get('/users/find', (req, res) => {
+    username = req.body.username;
+    if (username) {
+        db.query("SELECT * FROM users WHERE username=?;", [username], (err, result, fields) => {
+            console.log(`Finding user with username ${username}...`);
+            res.status(err ? 500 : 200).send(err ? err : result);
+        });
+    } else res.status(400).send("Bad request, no username parameter found in body.")
 });
 
 // Update a user's information. It is only possible to update a user's username, email address, or password hash.
