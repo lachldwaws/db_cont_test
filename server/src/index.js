@@ -71,14 +71,28 @@ app.patch('/users/update', (req, res) => {
 
 curl --header "Content-Type: application/json" \
 --request DELETE \
---data '{"key1": "value1", "username": "awesomeuser123", "doesthissuck": "hellnoitdont"}' \
+--data '{"username": "awesomeuser123"}' \
 http://localhost:9001/users/delete
 
 */
 app.delete('/users/delete', (req, res) => {
-    // TODO
-    console.log(req.body);
-    res.status(501).send("To be implemented.\n");
+    console.log("Delete path requested. Request body: " + JSON.stringify(req.body));
+    if (req.body.username) {
+        console.log(`Found the username key (set correctly) in body with value "${req.body.username}". Attempting deletion...`);
+        db.query("DELETE FROM users WHERE username = ?;", [req.body.username], (err, result, fields) => {
+            // Error during deletion attempt.
+            if (err) { console.log("Error!"); res.status(500).send(err); }
+            // Request formatted correctly, however the target user does not exist.
+            else if (result["affectedRows"] == 0) {
+                console.log(`Username ${req.body.username} not found.`);
+                res.status(404).send(`Username ${req.body.username} not found.`);
+            }
+            // User was deleted successfully.
+            else res.status(200).send(`Deleted user ${req.body.username} successfully.`);
+        });
+    // Username was not provided in body.
+    } else res.status(400).send("Bad request, username key not found in body.");
+
 });
 
 /* Other Routes */
