@@ -1,6 +1,7 @@
 const Express = require('express');
 const MySQL = require('mysql');
 const bodyParser = require('body-parser');
+const isemail = require('isemail');
 
 const app = Express();
 const port = 5000;
@@ -33,10 +34,58 @@ app.listen(port, () => {
  */
 
 // Add a user to the users table.
+// Accepted parameters: ['username', 'email', 'password_hash']
+// Password hash must be bcrypt, this can be verified by checking if it starts with "$2" (this is a weak check).
 
+/* Test Working Command:
+
+curl --header "Content-Type: application/json" \
+--request PUT \
+--data '{"username": "greatestuser789", "email": "thegreatest@awesome.me",
+"password_hash": "$2a$12$R9h/cIPz0gi.NSs7XkhU2OPST9/PKBxiqquzi.KI3gO2t0jURNMUW"}' \
+http://localhost:9001/users/add
+
+*/
 app.put('/users/add', (req, res) => {
-    // TODO
-    res.status(501).send("To be implemented.");
+    username = req.body.username;
+    email = req.body.email
+    password_hash = req.body.password_hash
+
+    // Checking username
+    if (username) {
+        console.log(`Checking username ${username}...`);
+        db.query("SELECT username FROM users;", (err, result, fields) => {
+            if (err) return res.status(500).send("Error during username check.");
+            for (let i = 0; i < result.length; i++) {
+                if (result[i]["username"] == username)
+                    return res.status(400).send(`Username ${username} is already taken.`);
+            }
+
+            // Checking email (this is nested because db queries are async)
+            if (email) {
+                console.log(`Checking email ${email}...`);
+                if (!(isemail.validate(email, { allowUnicode: false }) && email.length <= 254)) {
+                    return res.status(400).send("Email address is invalid. This is normally due to the fact that it is either too long, malformed, or contains non-ASCII characters.");
+                }
+            } else console.log("No email provided. Skipping email check...");
+        
+            if (password_hash) {
+                console.log(`Checking password hash...`);
+                if (!(password_hash.startsWith("$2") && password_hash.length == 60)) {
+                    return res.status(400).send("Malformed password hash.");
+                }
+            } else return res.status(400).send("Required field \"password_hash\" not found.");
+        
+            // All checks passed, insert the user into the database.
+            console.log("All checks passed. Inserting user into the database...");
+            db.query("INSERT INTO users(username, email, password_hash) VALUES (?, ?, ?)",
+            [username, email ? email : "", password_hash], (err, result, fields) => {
+                res.status(err ? 500 : 201).send(err ? err : `New user ${username} added successfully.`);
+            });
+
+        });
+    } else return res.status(400).send("Required field \"username\" not found.");
+
 });
 
 // Read all the entries in the users table.
