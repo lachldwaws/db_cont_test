@@ -4,7 +4,7 @@
   "description": "Server part of container app",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha tests",
     "dev": "nodemon src/index.js",
     "start": "node src/index.js"
   },
@@ -26,6 +26,7 @@
     "body-parser": "^1.19.2",
     "express": "^4.17.3",
     "isemail": "^3.2.0",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "node-fetch": "^2.6.7"
   }
 }
