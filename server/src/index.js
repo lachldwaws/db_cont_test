@@ -57,36 +57,36 @@ app.put('/users/add', (req, res) => {
     if (username) {
         console.log(`Checking username ${username}...`);
         db.query("SELECT username FROM users;", (err, result, fields) => {
-            if (err) return res.status(500).send("Error during username check.");
+            if (err) return res.status(500).send({ "error": "Error during username check." });
             for (let i = 0; i < result.length; i++) {
                 if (result[i]["username"] == username)
-                    return res.status(400).send(`Username ${username} is already taken.`);
+                    return res.status(400).send({ "error": `Username ${username} is already taken.` });
             }
 
             // Checking email (this is nested because db queries are async)
             if (email) {
                 console.log(`Checking email ${email}...`);
                 if (!(isemail.validate(email, { allowUnicode: false }))) {
-                    return res.status(400).send("Email address is invalid. This is normally due to the fact that it is either too long, malformed, or contains non-ASCII characters.");
+                    return res.status(400).send({ "error": "Email address is invalid. This is normally due to the fact that it is either too long, malformed, or contains non-ASCII characters." });
                 }
             } else console.log("No email provided. Skipping email check...");
         
             if (password_hash) {
                 console.log(`Checking password hash...`);
                 if (!validPasswordHash(password_hash)) {
-                    return res.status(400).send("Malformed password hash.");
+                    return res.status(400).send({ "error": "Malformed password hash." });
                 }
-            } else return res.status(400).send("Required field \"password_hash\" not found.");
+            } else return res.status(400).send({ "error": "Required field \"password_hash\" not found." });
         
             // All checks passed, insert the user into the database.
             console.log("All checks passed. Inserting user into the database...");
             db.query("INSERT INTO users(username, email, password_hash) VALUES (?, ?, ?)",
             [username, email ? email : "", password_hash], (err, result, fields) => {
-                res.status(err ? 500 : 201).send(err ? err : `New user ${username} added successfully.`);
+                res.status(err ? 500 : 201).send(err ? { "error": err } : { "result": { "message": `New user ${username} added successfully.` } });
             });
 
         });
-    } else return res.status(400).send("Required field \"username\" not found.");
+    } else return res.status(400).send({ "error": "Required field \"username\" not found."});
 
 });
 
@@ -95,7 +95,7 @@ app.put('/users/add', (req, res) => {
 app.get('/users', (req, res) => {
     db.query("SELECT * FROM users;", (err, result, fields) => {
         console.log("Querying all users.");
-        res.status(err ? 500 : 200).send(err ? err : result);
+        res.status(err ? 500 : 200).send(err ? { "error": err } : { "result": result });
     });
 });
 
@@ -114,9 +114,9 @@ app.get('/users/find', (req, res) => {
     if (username) {
         db.query("SELECT * FROM users WHERE username=?;", [username], (err, result, fields) => {
             console.log(`Finding user with username ${username}...`);
-            res.status(err ? 500 : 200).send(err ? err : result);
+            res.status(err ? 500 : 200).send(err ? { "error": err } : { "result": result });
         });
-    } else res.status(400).send("Bad request, no username parameter found in body.")
+    } else res.status(400).send({ "error": "Bad request, no username parameter found in body." })
 });
 
 // Update a user's information. It is only possible to update a user's username, email, or password_hash.
@@ -137,33 +137,33 @@ app.patch('/users/update', (req, res) => {
     const user_id = req.body["user_id"];
     const field_name = req.body["field_name"];
     const field_value = req.body["field_value"]
-    if (!(user_id && field_name && field_value)) return res.status(400).send("User update request missing 1 or more required fields in request body.");
+    if (!(user_id && field_name && field_value)) return res.status(400).send({ "error": "User update request missing 1 or more required fields in request body." });
 
     // Validate user ID
     db.query("SELECT id FROM users WHERE id = ?", [user_id], (err, result, fields) => {
-        if (err) return res.status(500).send("Error checking user_id validity.");
-        else if (result.length == 0) return res.status(400).send(`No user with ID ${user_id}.`);
+        if (err) return res.status(500).send({ "error": "Error checking user_id validity." });
+        else if (result.length == 0) return res.status(400).send({ "error": `No user with ID ${user_id}.` });
 
         /* Validating and updating the new value */
         if (field_name == "username") {
             db.query("SELECT username FROM users WHERE username = ?;", [field_value], (err, result, fields) => {
-                if (err) return res.status(500).send("Error checking username validity.");
-                else if (result.length > 0) return res.status(400).send(`Username ${username} is taken.`);
+                if (err) return res.status(500).send({ "error": "Error checking username validity." });
+                else if (result.length > 0) return res.status(400).send({ "error": `Username ${username} is taken.` });
 
                 // Insert username into database here since within async call.
                 db.query("UPDATE users SET username = ? WHERE id = ?", [field_value, user_id], (err, result, fields) => {
-                    if (err) return res.status(500).send("Error updating username.");
-                    else return res.status(200).send(`${field_name} ${field_value} updated successfully.`);
+                    if (err) return res.status(500).send({ "error": "Error updating username." });
+                    else return res.status(200).send({ "result": `${field_name} ${field_value} updated successfully.` });
                 })
 
             })
         } else if (field_name == "email") {
             if (!isemail.validate(field_value, { allowUnicode: false }))
-                return res.status(400).send("Email address is invalid. This is normally due to the fact that it is either too long, malformed, or contains non-ASCII characters.");
+                return res.status(400).send({ "error": "Email address is invalid. This is normally due to the fact that it is either too long, malformed, or contains non-ASCII characters." });
         } else if (field_name == "password_hash") {
             if (!validPasswordHash(field_value))
-                return res.status(400).send("Malformed password hash.");
-        } else return res.status(400).send(`Unknown field name ${field_name}.`);
+                return res.status(400).send({ "error": "Malformed password hash." });
+        } else return res.status(400).send({ "error": `Unknown field name ${field_name}.` });
 
         // Checks passed, insert value for email or password_hash into database.
         if (field_name == "username") return;
@@ -171,11 +171,11 @@ app.patch('/users/update', (req, res) => {
         if (field_name == "email") query_string = "UPDATE users SET email = ? WHERE id = ?;";
         else query_string = "UPDATE users SET password_hash = ? WHERE id = ?;";
         db.query(query_string, [field_value, user_id], (err, result, fields) => {
-            if (err) return res.status(500).send(`Error updating ${field_name} value.`);
+            if (err) return res.status(500).send({ "error": `Error updating ${field_name} value.` });
             // DO NOT display the password_hash.
             else return field_name == "password_hash" ?
-                        res.status(200).send(`${field_name} updated successfully.`) :
-                        res.status(200).send(`${field_name} ${field_value} updated successfully.`);
+                        res.status(200).send({ "result": `${field_name} updated successfully.` }) :
+                        res.status(200).send({ "result": `${field_name} ${field_value} updated successfully.` });
         });
 
     });
@@ -199,17 +199,17 @@ app.delete('/users/delete', (req, res) => {
         console.log(`Found the username key (set correctly) in body with value "${req.body.username}". Attempting deletion...`);
         db.query("DELETE FROM users WHERE username = ?;", [req.body.username], (err, result, fields) => {
             // Error during deletion attempt.
-            if (err) { console.log("Error!"); res.status(500).send(err); }
+            if (err) { console.log("Error!"); res.status(500).send({ "error": err }); }
             // Request formatted correctly, however the target user does not exist.
             else if (result["affectedRows"] == 0) {
                 console.log(`Username ${req.body.username} not found.`);
-                res.status(404).send(`Username ${req.body.username} not found.`);
+                res.status(404).send({ "error": `Username ${req.body.username} not found.` });
             }
             // User was deleted successfully.
-            else res.status(200).send(`Deleted user ${req.body.username} successfully.`);
+            else res.status(200).send({ "result": `Deleted user ${req.body.username} successfully.` });
         });
     // Username was not provided in body.
-    } else res.status(400).send("Bad request, username key not found in body.");
+    } else res.status(400).send({ "error": "Bad request, username key not found in body." });
 
 });
 
@@ -217,5 +217,5 @@ app.delete('/users/delete', (req, res) => {
 
 app.get('/', (req, res) => {
     console.log("This is the homepage.");
-    res.status(201).send("What's up yo. Nothing created, just testing the 201 code.");
+    res.status(501).send({ "error": "You've hit the root page. There's nothing here." });
 });
