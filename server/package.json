@@ -23,10 +23,10 @@
   },
   "homepage": "https://github.com/lachldwaws/db_cont_test#readme",
   "dependencies": {
+    "axios": "^0.26.0",
     "body-parser": "^1.19.2",
     "express": "^4.17.3",
     "isemail": "^3.2.0",
-    "mysql": "^2.18.1",
-    "node-fetch": "^2.6.7"
+    "mysql": "^2.18.1"
   }
 }
