@@ -1,4 +1,5 @@
-# Kubernetes deployment for the application.
+# Kubernetes deployment for the database portion of the 2-container application.
+# When both services are being brought down consecutively, THE DATABASE IN THIS FILE NEEDS TO BE BROUGHT DOWN SECOND.
 ---
 # Namespace for the database server
 apiVersion: v1
@@ -65,6 +66,7 @@ spec:
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: password123
+        args: ["--default-authentication-plugin=mysql_native_password"]
         volumeMounts:
         - name: database-initialization-script
           mountPath: /docker-entrypoint-initdb.d/config.sql
@@ -86,7 +88,8 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: db-server
-  name: database-service
+  # The name of this service has to match the docker-compose service name for the code to be able to reference it.
+  name: database
 spec:
   ports:
     - port: 3306
