@@ -9,7 +9,7 @@ services:
         # This will cause the mysql container to execute this script and thus add our database.
       - ./db:/docker-entrypoint-initdb.d
     environment:
-    # The value of the environment variable MY_PASSWORD1 is set as the value of MYSQL_ROOT_PASSWORD.
+    # The value of this environment variable is set as the value of MYSQL_ROOT_PASSWORD.
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
   server:
     image: db_server

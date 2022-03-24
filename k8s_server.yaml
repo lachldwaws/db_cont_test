@@ -1,0 +1,11 @@
+# This file should be run after the database spec to create the "db-server" namespace and database first.
+---
+# API server deployment
+
+---
+# API server service
+
+---
+# Ingress for the API server service. We don't expose the database service because there's no need to do so.
+
+---

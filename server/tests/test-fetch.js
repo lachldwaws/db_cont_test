@@ -6,7 +6,7 @@ axios({
     url: 'http://localhost:9001/users/find',
     headers: {'Content-Type': 'application/json'},
     data: {
-        username: "greatestuser789"
+        username: "awesomeuser123"
     }
 }).then(response => {
     // This block is executed for all 2xx response codes.
